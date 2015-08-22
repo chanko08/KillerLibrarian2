@@ -16,7 +16,7 @@ end
 
 
 function TitleScreenState:keypressed(key)
-  GameState.switch(LevelScreenState)
+  GameState.switch(LevelScreenState, 1)
 end
 
 function TitleScreenState:keyreleased(key)
