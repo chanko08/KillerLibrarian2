@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" width="100" height="50" tilewidth="32" tileheight="32">
- <properties>
-  <property name="tileset" value="assets/gfx/tiles.png"/>
- </properties>
  <tileset firstgid="1" name="tiles" tilewidth="32" tileheight="32">
+  <properties>
+   <property name="src" value="assets/gfx/tiles.png"/>
+  </properties>
   <image source="../gfx/tiles.png" width="320" height="320"/>
  </tileset>
  <layer name="ground" width="100" height="50">

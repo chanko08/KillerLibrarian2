@@ -3,13 +3,76 @@ local LevelScreenState = GameState.new()
 
 local assets = {
   player = {
-    walk  = {path="assets/gfx/player_walk.png", frame_width=36},
-    stand = {"assets/gfx/player_stand.png",     frame_width=32},
-    shoot = {"assets/gfx/player_fire.png",      frame_width=38},
+    walk  = {
+      path="assets/gfx/player_walk.png",
+      frame_width=36,
+      frames='1-6'
+    },
+    stand = {
+      path="assets/gfx/player_stand.png",
+      frame_width=32,
+      frames=1
+    },
+    shoot = {
+      path="assets/gfx/player_fire.png",
+      frame_width=38,
+      frames=1
+    },
   },
   levels = {
     'assets/lvls/lvl1.lua',
   },
+}
+
+local function new_player(map, obj)
+  --set up position of player correctly
+  obj.pos = Vector(obj.x, obj.y)
+  obj.pos.x = math.floor(obj.pos.x / map.tilewidth) * map.tilewidth
+  obj.pos.y = (math.floor(obj.pos.y / map.tileheight) - 1) * map.tileheight
+
+  --nil out x, and y so I can read objects easier
+  obj.x = nil
+  obj.y = nil
+
+
+  obj.vel = Vector(0,0)
+
+
+
+  obj.animations = {}
+  for asset_name, a in pairs(assets.player) do
+    if not love.filesystem.exists(a.path) then
+      error('picture file does not exist: ' .. a.path)
+    end
+
+    if not love.filesystem.isFile(a.path) then
+      error('filepath to picture is for a directory: ' .. a.path)
+    end
+
+    local img = love.graphics.newImage(a.path)
+    local g = anim8.newGrid(
+      a.frame_width,
+      img:getHeight(),
+      img:getWidth(),
+      img:getHeight()
+    )
+    obj.animations[asset_name] = {
+      animation = anim8.newAnimation(g(a.frames,1), 1/30.0),
+      sprite    = img
+    }
+  end
+
+  obj.current_animation = obj.animations['stand'].animation
+  obj.current_sprite = obj.animations['stand'].sprite
+
+
+
+  return obj
+end
+
+
+local constructors = {
+  Player = new_player
 }
 
 
@@ -98,6 +161,21 @@ local function load_tilelayers(tiled_map, tiles)
   end
 end
 
+local function load_objectlayers(tiled_map, entity_constructors)
+  local entities = {}
+  for i, layer in ipairs(tiled_map.layers) do
+    if layer.type == 'objectgroup' then
+      for i, obj in ipairs(layer.objects) do
+        if entity_constructors[obj.type] then
+          table.insert(entities, entity_constructors[obj.type](tiled_map, obj))
+        end
+      end
+    end
+  end
+
+  tiled_map.entities = entities
+end
+
 local function load_level(lvlid)
   lvl_file = assets.levels[lvlid]
 
@@ -108,13 +186,26 @@ local function load_level(lvlid)
   local map = load_tiled_file(lvl_file)
   local tiles = load_tiles(map)
   load_tilelayers(map, tiles)
+  load_objectlayers(map, constructors)
 
   return map
 end
 
+
+
 function LevelScreenState:enter(from, lvlid)
   self.lvl = load_level(lvlid)
   self.camera = Camera(320, 200)
+
+end
+
+
+function LevelScreenState:update(dt)
+  for i, entity in ipairs(self.lvl.entities) do
+    if entity.current_animation then
+      entity.current_animation:update(dt)
+    end
+  end
 end
 
 
@@ -132,6 +223,17 @@ function LevelScreenState:draw()
       end
     end
   end
+
+  for i, entity in ipairs(self.lvl.entities) do
+    if entity.current_animation then
+      entity.current_animation:draw(
+        entity.current_sprite,
+        entity.pos.x,
+        entity.pos.y
+      )
+    end
+  end
+
   self.camera:detach()
 end
 
