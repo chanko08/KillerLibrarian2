@@ -53,8 +53,8 @@ local function handle_keyboard_down(entity, key)
 
   if key == 'lctrl' then
     --default to shooting
-    local book = book.new(entity)
-    tiny.addEntity(ecs, book)
+    local librarycard = librarycard.new(entity)
+    tiny.addEntity(ecs, librarycard)
 
     if entity.vel.x == 0 then
       local mir = true
@@ -136,6 +136,9 @@ function player.new(map, obj)
     32,
     64,
     function(player, other)
+      if other.enemy then
+        return 'cross'
+      end
       return 'slide'
     end
   )
@@ -147,6 +150,7 @@ function player.new(map, obj)
   obj.jumping = true
   obj.facing = 'right'
   obj.looking_up = false
+  obj.health = 100
 
 
   print('camera!')

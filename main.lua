@@ -12,7 +12,7 @@ _          = require 'lib.underscore'
 
 animation = require 'systems.animation'
 player    = require 'systems.player'
-book      = require 'systems.book'
+librarycard      = require 'systems.librarycard'
 collision = require 'systems.collision'
 enemy     = require 'systems.enemy'
 
@@ -41,7 +41,7 @@ function level_state(lvlid)
   tiny.addSystem(ecs, animation.system)
   tiny.addSystem(ecs, player.controller)
   tiny.addSystem(ecs, player.system)
-  tiny.addSystem(ecs, book.system)
+  tiny.addSystem(ecs, librarycard.system)
   tiny.addSystem(ecs, enemy.system)
   tiny.addSystem(ecs, enemy.teenager.system)
   tiny.addSystem(ecs, collision.system)

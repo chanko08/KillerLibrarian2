@@ -1,18 +1,18 @@
-local book = {}
+local librarycard = {}
 
-book.assets = {
+librarycard.assets = {
   default = {
-    path="assets/gfx/book.png",
+    path="assets/gfx/library_card.png",
     frame_width=32,
-    frames=1
+    frames='1-6'
   },
 }
 
 
-book.system = tiny.processingSystem()
-book.system.filter = tiny.requireAll('book')
+librarycard.system = tiny.processingSystem()
+librarycard.system.filter = tiny.requireAll('librarycard')
 
-function book.system:process(entity, dt)
+function librarycard.system:process(entity, dt)
   if entity.collision.num_cols > 0 then
     --remove the entity
     tiny.removeEntity(ecs, entity)
@@ -23,18 +23,18 @@ function book.system:process(entity, dt)
   end
 end
 
-function book.new(player)
+function librarycard.new(player)
   --set up position of pl 
-  local book_width = 32
-  local book_height = 32
+  local librarycard_width = 32
+  local librarycard_height = 32
   local vx, vy = 0,0
   local x,y = player.pos:unpack()
   if player.looking_up then
     --x = x + player.collision.width / 2
-    y = y - book_height - 10
+    y = y - librarycard_height - 10
     vy = -1
   elseif player.facing == 'left' then
-    x = x - book_width - 10
+    x = x - librarycard_width - 10
     vx = -1
   else
     x = x + player.collision.width + 10
@@ -44,7 +44,7 @@ function book.new(player)
 
   local obj = collision.new(
     animation.new(
-      book.assets,
+      librarycard.assets,
       {}
     ),
     x,
@@ -60,10 +60,10 @@ function book.new(player)
 
   obj.vel.x = vx * obj.lateral_speed
   obj.vel.y = vy * obj.lateral_speed
-  obj.book = true
+  obj.librarycard = true
   obj.apply_gravity=false
 
   return obj
 end
 
-return book
+return librarycard

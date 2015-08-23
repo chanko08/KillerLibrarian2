@@ -12,11 +12,23 @@ enemy.assets = {
 
 }
 
+
+enemy.collision_filter = function(enemy, other)
+  if other.Player or other.librarycard then
+    return 'cross'
+  end
+  return 'slide'
+end
+
 enemy.system = tiny.processingSystem()
 enemy.system.filter = tiny.requireAll('enemy')
 function enemy.system:process(entity, dt)
   if entity.hurt then
-    tiny.removeEntity(ecs, entity)
+    entity.hurt = false
+    entity.num_hits = entity.num_hits - 1
+    if entity.num_hits <= 0 then
+      tiny.removeEntity(ecs, entity)
+    end
   end
 end
 
@@ -60,13 +72,15 @@ function enemy.teenager.new(map, obj)
     x,
     y,
     64,
-    64
+    64,
+    enemy.collision_filter
   )
   obj.enemy = true
   obj.teenager = true
   obj.facing = 'left'
   animation.switch(obj, 'walk', true)
   obj.lateral_speed = 100
+  obj.num_hits=4
 
 
   return obj
@@ -87,12 +101,14 @@ function enemy.granny.new(map, obj)
     x,
     y,
     64,
-    64
+    64,
+    enemy.collision_filter
   )
   obj.enemy = true
   obj.facing = 'left'
   animation.switch(obj, 'walk', true)
   obj.lateral_speed = 100
+  obj.num_hits = 3
 
 
   return obj
