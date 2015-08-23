@@ -106,6 +106,50 @@ return {
           height = 0,
           visible = true,
           properties = {}
+        },
+        {
+          name = "Teenager",
+          type = "Teenager",
+          shape = "rectangle",
+          x = 432,
+          y = 303,
+          width = 0,
+          height = 0,
+          visible = true,
+          properties = {}
+        },
+        {
+          name = "Granny",
+          type = "Granny",
+          shape = "rectangle",
+          x = 725,
+          y = 302,
+          width = 0,
+          height = 0,
+          visible = true,
+          properties = {}
+        },
+        {
+          name = "Granny",
+          type = "Granny",
+          shape = "rectangle",
+          x = 783,
+          y = 303,
+          width = 0,
+          height = 0,
+          visible = true,
+          properties = {}
+        },
+        {
+          name = "Granny",
+          type = "Granny",
+          shape = "rectangle",
+          x = 847,
+          y = 304,
+          width = 0,
+          height = 0,
+          visible = true,
+          properties = {}
         }
       }
     }

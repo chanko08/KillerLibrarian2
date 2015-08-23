@@ -7,7 +7,9 @@ local assets = {
 }
 
 local constructors = {
-  Player = player.new
+  Player = player.new,
+  Teenager = enemy.teenager.new,
+  Granny   = enemy.granny.new
 }
 
 function loader.load_tiled_file(filename)

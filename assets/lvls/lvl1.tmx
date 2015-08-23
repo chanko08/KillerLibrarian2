@@ -5012,5 +5012,9 @@
  </layer>
  <objectgroup name="entities" width="100" height="50">
   <object name="Player" type="Player" x="49" y="307"/>
+  <object name="Teenager" type="Teenager" x="432" y="303"/>
+  <object name="Granny" type="Granny" x="725" y="302"/>
+  <object name="Granny" type="Granny" x="783" y="303"/>
+  <object name="Granny" type="Granny" x="847" y="304"/>
  </objectgroup>
 </map>
