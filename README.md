@@ -22,7 +22,7 @@ created by [Alex Bechanko](https://twitter.com/chanko08)
 ## The Code ##
 The code is available on [github](https://github.com/chanko08/KillerLibrarian2) with
 the MIT License.
-The run the code you need to have [Love2d)(www.love2d.org) version 0.9.2 or greater
+The run the code you need to have [Love2d](www.love2d.org) version 0.9.2 or greater
 (although greater has not been tested)
 For Linux users, provided that Love2d is on you path you can simply run
 `love /path/to/folder` and that will start the game.
