@@ -18,10 +18,19 @@ player.assets = {
   },
 }
 
+player.sound = {
+  hurt = love.audio.newSource("assets/sfx/Hit_Hurt.wav", "static"),
+  shoot = love.audio.newSource("assets/sfx/Laser_Shoot.wav", "static"),
+  jump  = love.audio.newSource("assets/sfx/Jump.wav", "static")
+
+
+}
+
 
 player.controller = tiny.processingSystem()
 player.controller.filter = tiny.requireAll('Player')
 player.controller.keyboard = true
+
 
 local function handle_keyboard_down(entity, key)
   if key =='left' then
@@ -42,6 +51,8 @@ local function handle_keyboard_down(entity, key)
   end
 
   if key == ' ' and not entity.jumping then
+    player.sound.jump:rewind()
+    player.sound.jump:play()
     entity.vel.y = entity.jump_speed
     entity.jumping = true
     entity.ignore_next_ground_hit = true
@@ -53,6 +64,8 @@ local function handle_keyboard_down(entity, key)
 
   if key == 'lctrl' then
     --default to shooting
+    player.sound.shoot:rewind()
+    player.sound.shoot:play()
     local librarycard = librarycard.new(entity)
     tiny.addEntity(ecs, librarycard)
 
@@ -112,11 +125,37 @@ player.system.filter = tiny.requireAll('Player')
 function player.system:process(entity, dt)
   if entity.collision.num_cols > 0 then
     -- check if we hit the ground
-    if entity.collision.cols[1].normal.y < 0 and not entity.ignore_next_ground_hit then
-      entity.jumping = false
-    else
-      entity.ignore_next_ground_hit = false
+    
+    for i,col in ipairs(entity.collision.cols) do
+      if col.normal.y < 0 and not entity.ignore_next_ground_hit then
+        entity.jumping = false
+      else
+        entity.ignore_next_ground_hit = false
+      end
+
+
+      if col.other.enemy and entity.can_be_hurt then
+        player.sound.hurt:play()
+        entity.health = entity.health - 4
+        entity.can_be_hurt = false
+        Timer.add(0.5, function() entity.can_be_hurt=true end)
+      end
     end
+
+  end
+
+  if entity.book_count == 0 then
+    if entity.next_level_id == 0 then
+      switch_state(game_win_state)
+      return
+    else
+      switch_state(level_state, entity.next_level_id)
+    end
+  end
+
+
+  if entity.health <= 0 then
+    switch_state(game_over_state, entity.next_level_id - 1)
   end
 end
 
@@ -136,14 +175,14 @@ function player.new(map, obj)
     32,
     64,
     function(player, other)
-      if other.enemy then
+      if other.enemy or other.Book then
         return 'cross'
       end
       return 'slide'
     end
   )
 
-  obj.jump_speed = -390
+  obj.jump_speed = -400
   obj.lateral_speed = 200
   obj.keyboard = true
   obj.max_fall_speed = 500
@@ -151,9 +190,14 @@ function player.new(map, obj)
   obj.facing = 'right'
   obj.looking_up = false
   obj.health = 100
+  print('TOTAL BOOKS!', map.properties.book_count)
+  obj.total_books   = map.properties.book_count
+  obj.book_count    = map.properties.book_count
+  obj.next_level_id = map.properties.next_level or 0
+  obj.score = 0
+  obj.can_be_hurt = true
 
 
-  print('camera!')
   camera = Camera(map, obj)
 
   return obj

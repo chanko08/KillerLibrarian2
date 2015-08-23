@@ -12,6 +12,10 @@ enemy.assets = {
 
 }
 
+enemy.sound = {
+  hurt = love.audio.newSource('assets/sfx/Hit_Hurt_Enemy.wav', 'static')
+}
+
 
 enemy.collision_filter = function(enemy, other)
   if other.Player or other.librarycard then
@@ -24,6 +28,8 @@ enemy.system = tiny.processingSystem()
 enemy.system.filter = tiny.requireAll('enemy')
 function enemy.system:process(entity, dt)
   if entity.hurt then
+    enemy.sound.hurt:rewind()
+    enemy.sound.hurt:play()
     entity.hurt = false
     entity.num_hits = entity.num_hits - 1
     if entity.num_hits <= 0 then

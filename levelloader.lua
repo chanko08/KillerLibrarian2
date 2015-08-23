@@ -3,16 +3,19 @@ local loader = {}
 local assets = {
   levels = {
     'assets/lvls/lvl1.lua',
+    'assets/lvls/lvl2.lua',
+    'assets/lvls/lvl3.lua'
   },
 }
 
 local constructors = {
-  Player = player.new,
+  Player   = player.new,
   Teenager = enemy.teenager.new,
-  Granny   = enemy.granny.new
+  Granny   = enemy.granny.new,
+  Book     = book.new
 }
 
-function loader.load_tiled_file(filename)
+function loader.load_tiled_file(lvl_file)
   if not love.filesystem.exists(lvl_file) then
     error('tiled file not found: ' .. lvl_file)
   end
@@ -126,6 +129,8 @@ function loader.load_objectlayers(map, entity_constructors)
           print('adding to entities ...')
           print(inspect(ent, {depth=1}))
           ecs:addEntity(ent)
+        else
+          print('could not find entity constructor for:'..obj.type)
         end
       end
     end
@@ -165,7 +170,9 @@ function loader.load_collision(map)
 end
 
 function loader.load_level(lvlid)
-  lvl_file = assets.levels[lvlid]
+  local lvl_file = assets.levels[tonumber(lvlid)]
+  print('loading new level id: ' .. lvlid)
+  print('loading new level: ' .. lvl_file)
 
   if lvlid == nil then
     error('level with level given level id not found:' .. strin(lvlid))

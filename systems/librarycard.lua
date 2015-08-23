@@ -19,6 +19,7 @@ function librarycard.system:process(entity, dt)
 
     if entity.collision.cols[1].other.enemy then
       entity.collision.cols[1].other.hurt = true
+      entity.player.score = entity.player.score + 10
     end
   end
 end
@@ -29,6 +30,7 @@ function librarycard.new(player)
   local librarycard_height = 32
   local vx, vy = 0,0
   local x,y = player.pos:unpack()
+  y = y + 16
   if player.looking_up then
     --x = x + player.collision.width / 2
     y = y - librarycard_height - 10
@@ -62,6 +64,7 @@ function librarycard.new(player)
   obj.vel.y = vy * obj.lateral_speed
   obj.librarycard = true
   obj.apply_gravity=false
+  obj.player = player
 
   return obj
 end
